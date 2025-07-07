@@ -1,0 +1,116 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Malle 2025 – Ostfriesland / Berlin</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background: url('https://cdn.pixabay.com/photo/2021/08/22/10/10/party-6563064_1280.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: white;
+      text-align: center;
+      padding: 2rem;
+    }
+    .container {
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 2rem;
+      border-radius: 16px;
+      max-width: 500px;
+      margin: auto;
+    }
+    button {
+      padding: 1rem 2rem;
+      margin: 1rem;
+      font-size: 1.2rem;
+      border: none;
+      border-radius: 10px;
+      background-color: #ff006e;
+      color: white;
+      cursor: pointer;
+    }
+    .response {
+      margin-top: 2rem;
+      font-size: 1.2rem;
+    }
+    a {
+      display: block;
+      margin-top: 2rem;
+      color: #00ffff;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Malle 2025 – Ostfriesland trifft Berlin</h1>
+    <p>Du hast den Barcode gescannt – jetzt geht’s rund!</p>
+
+    <button onclick="showMessage('man')">Ich bin ein Mann</button>
+    <button onclick="showMessage('woman')">Ich bin eine Frau</button>
+
+    <div class="response" id="response"></div>
+
+    <a href="https://www.instagram.com/" target="_blank">Folge uns auf Instagram</a>
+  </div>
+
+  <script>
+    const SUPABASE_URL = "https://your-project.supabase.co"; // <-- Ersetzen
+    const SUPABASE_KEY = "your-anon-key"; // <-- Ersetzen
+
+    async function logVisit() {
+      await fetch(`${SUPABASE_URL}/rest/v1/visits`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "apikey": SUPABASE_KEY,
+          "Authorization": `Bearer ${SUPABASE_KEY}`
+        },
+        body: JSON.stringify({})
+      });
+    }
+
+    async function saveResponse(answer) {
+      await fetch(`${SUPABASE_URL}/rest/v1/responses`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "apikey": SUPABASE_KEY,
+          "Authorization": `Bearer ${SUPABASE_KEY}`
+        },
+        body: JSON.stringify({ answer: answer })
+      });
+    }
+
+    async function showMessage(type) {
+      const response = document.getElementById('response');
+      const buttons = document.querySelectorAll('button');
+
+      // Alle Buttons deaktivieren/verstecken
+      buttons.forEach(btn => btn.style.display = 'none');
+
+      if (type === 'man') {
+        response.innerHTML = "<h2>Brudi, du hast's gefunden!<br>Jetzt: Sangria hoch, Stimmung hoch, Leben feiern! 🍻🔥</h2>";
+      } else {
+        response.innerHTML = `Na du neugierige Scannerin 😉 Jetzt wird entschieden:<br><br>
+          <button onclick="handleAnswer('Klar, lass einen heben!')">Klar, lass einen heben! 🍹</button>
+          <button onclick="handleAnswer('Ich schau nur…')">Ich schau nur… 😅</button>
+          <button onclick="handleAnswer('Erzähl mal mehr!')">Erzähl mal mehr! 😏</button>`;
+      }
+    }
+
+    async function handleAnswer(answer) {
+      await saveResponse(answer);
+      document.getElementById('response').innerHTML = \`Antwort gespeichert: <strong>\${answer}</strong> – bis gleich an der Theke! 🍹\`;
+    }
+
+    // Log visit when page loads
+    window.onload = () => {
+      logVisit();
+    };
+  </script>
+</body>
+</html>
